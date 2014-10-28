@@ -13,10 +13,10 @@ else
  ZWANGSLINKS=""
 fi
 
-# Es wird aus usersettings.conf eingelesen, welche Konfigurationen 
-# zwingend verlinkt werden. Ist im Serverhome unter Einstellungen 
-# keine entsprechende Datei, werden die Daten vom Standardprofil 
-# dorthin kopiert. 
+# Es wird aus usersettings.conf eingelesen, welche Konfigurationen
+# zwingend verlinkt werden. Ist im Serverhome unter Einstellungen
+# keine entsprechende Datei, werden die Daten vom Standardprofil
+# dorthin kopiert.
 
 if [ -f /etc/linuxmuster-client/profile/usersettings-opt.conf ]
 then
@@ -26,7 +26,7 @@ else
 fi
 
 # Optionale Links werden in usersettings-opt.conf eingetragen.
-# Ist hier ein "ALL:ALL" (Quelle Serverhome:Ziel lokales Home) 
+# Ist hier ein "ALL:ALL" (Quelle Serverhome:Ziel lokales Home)
 # eingetragen, werden alle Konfigurationsdateien
 # im Serverhome unter Einstellungen mit der gleichnamigen
 # Konfigurationsdatei im lokalen Home verlinkt
@@ -36,12 +36,12 @@ fi
 # (z.B. "firefox:.mozilla/firefox/123xyz.default"
 #  oder "libreoffice:.config/libreoffice").
 
-# Konfiguration einlesen für                                                                                                         
-# Basics zu linuxmuster-clients                                                                                                      
+# Konfiguration einlesen für
+# Basics zu linuxmuster-clients
 . /etc/linuxmuster-client/linuxmuster-client.conf || exit 1
-# Verzeichnis für Einstellungen im Heimatverzeichnis auf dem Server                                                                  
-. /etc/linuxmuster-client/profile/home-preference.conf || exit 1                                                                     
-# Verzeichnisnamen über Links                                                                                                        
+# Verzeichnis für Einstellungen im Heimatverzeichnis auf dem Server
+. /etc/linuxmuster-client/profile/home-preference.conf || exit 1
+# Verzeichnisnamen über Links
 #. /etc/linuxmuster-client/shares/linkfoldername.conf || exit 1
 
 # Hier ist der Ort anzugeben, an dem die Konfigurationen
@@ -52,7 +52,7 @@ SERVEREINSTELLUNGEN=`echo $HOMEFOLDERNAME/$HOMEPREFERENCEFOLDERNAME`
 # Die Variable $HOMEDIR wird übergreifend gesetzt
 # daher auskommentiert
 #HOMEDIR="`pwd`"
- 
+
 # Dieses Script soll nur einmal ausgeführt werden.
 # Nur nachdem das Serverhome des Benutzers gemountet wurde,
 # sind $USER und $VOLUME identisch, in allen anderen Fällen
@@ -61,12 +61,12 @@ if [ $USER != $VOLUME ]; then
     return 0
 fi
 
-# Ist das Verzeichnis $SERVEREINSTELLUNGEN nicht vorhanden, 
+# Ist das Verzeichnis $SERVEREINSTELLUNGEN nicht vorhanden,
 # wird es angelegt
 if [ -d $HOMEDIR/$SERVEREINSTELLUNGEN ]
 then
  cd ~
-else 
+else
  mkdir -p $HOMEDIR/$SERVEREINSTELLUNGEN
 fi
 
@@ -78,14 +78,14 @@ IFS=$'\012'
 # Serverkonfigurationen nach ZWANGSLINKS erzeugen
 
 for ZWANG in $ZWANGSLINKS; do
- 
+
  SERVER=`echo $ZWANG | cut -d ":" -f 1`
- 
+
  LOKAL=`echo $ZWANG | cut -d ":" -f 2`
- 
- # Wenn Ziel auf Server NICHT vorhanden, 
+
+ # Wenn Ziel auf Server NICHT vorhanden,
  # (weder als Verzeichnis -d noch als Datei -f)
- # wird dieses aus dem Standardprofil 
+ # wird dieses aus dem Standardprofil
  # (also das lokal vorhandene) kopiert.
 
  # Konfigurationsverzeichnisse
@@ -94,39 +94,39 @@ for ZWANG in $ZWANGSLINKS; do
  then
   cd $HOMEDIR
  else
-  
+
   if [ -f `echo $HOMEDIR/$SERVEREINSTELLUNGEN/$SERVER` ]
-  then 
+  then
    cd $HOMEDIR
   else
-   
+
    if [ -d `echo $HOMEDIR/$LOKAL` ]
    then
-    
+
     cp -a $HOMEDIR/$LOKAL $HOMEDIR/$SERVEREINSTELLUNGEN/$SERVER
-    
+
    else
-    
+
     if [ -f `echo $HOMEDIR/$LOKAL` ]
-    then 
-     
+    then
+
      cp $HOMEDIR/$LOKAL $HOMEDIR/$SERVEREINSTELLUNGEN/$SERVER
-     
+
     else
-     
+
      touch $HOMEDIR/$SERVEREINSTELLUNGEN/$SERVER-kann-nicht-erzeugt-werden
      # Hinweis:
      # Ohne Standard kann kein Konfiguration erzeugt werden,
      # da nicht bekannt ist, ob es eine Datei oder ein Verzeichnis sein muss.
-    
-    fi  
-    
-   fi 
-   
+
+    fi
+
+   fi
+
   fi
-  
- fi 
- 
+
+ fi
+
 done
 
 
@@ -134,7 +134,7 @@ done
 
 
 # Für die Konfigurationen auf dem Serverhome (unter Einstellungen)
-# werden Links ins lokale Home erzeugt, sofern die 
+# werden Links ins lokale Home erzeugt, sofern die
 # Konfigurationen unter usersettings.conf oder usersettings-opt.conf
 # aufgeführt sind, bzw. ein "ALL:ALL" enthalten ist (dann werden alle
 # verlinkt).
@@ -149,7 +149,7 @@ ZIELE=`ls -A $HOMEDIR/$SERVEREINSTELLUNGEN/`
 # Alle vorgesehenen Konfigurationen einlesen
 # ist ein "ALL:ALL" enthalten?
 if [ "`echo $OPTLINKS | grep "ALL:ALL"`" = "" ]
-then 
+then
  ALLE="0"
 else
  ALLE="1"
@@ -157,7 +157,7 @@ fi
 
 ALLEKONF=`echo $ZWANGSLINKS $OPTLINKS`
 
-# Alle eingelesenen Dateien aus Serverhome werden mit dem 
+# Alle eingelesenen Dateien aus Serverhome werden mit dem
 # lokalen home verlinkt, sofern entsprechende Einträge (ALLE=0)
 # oder "ALL:ALL" gefunden wird (ALLE=1).
 
@@ -173,38 +173,38 @@ for LINKZIEL in $ZIELE; do
    rm -rf $HOMEDIR/$LINKZIEL
    ln -s $HOMEDIR/$SERVEREINSTELLUNGEN/$LINKZIEL $HOMEDIR/$LINKZIEL
   fi
- else 
+ else
   # anderenfalls gibt es einen Konfiguration für die Einstellungen
   # dann wird das Ziel bestimmt und der Link gesetzt
- 
+
   # zunächst werden Zwangslinks durchsucht
   # ein vorheriges Zusammensetzen von optionalen und Zwangslinks
   # funktioniert nicht, das dann alles als eine Zeile interpretiert wird
-  
+
   for EINZEL in $ZWANGSLINKS; do
-   if [ "`echo $EINZEL | grep $LINKZIEL`" == "" ] 
+   if [ "`echo $EINZEL | grep $LINKZIEL`" == "" ]
    then
     cd ~
    else
     LOKAL=`echo $EINZEL | cut -d ":" -f 2`
     rm -rf $HOMEDIR/$LOKAL
     ln -s $HOMEDIR/$SERVEREINSTELLUNGEN/$LINKZIEL $HOMEDIR/$LOKAL
-   fi 
-  done
-  
-  # dann werden optionale Links durchsucht
-  for EINZEL in $OPTLINKS; do
-   if [ "`echo $EINZEL | grep $LINKZIEL`" == "" ] 
-   then
-    cd ~
-   else
-    LOKAL=`echo $EINZEL | cut -d ":" -f 2`
-    rm -rf $HOMEDIR/$LOKAL
-    ln -s $HOMEDIR/$SERVEREINSTELLUNGEN/$LINKZIEL $HOMEDIR/$LOKAL
-   fi 
+   fi
   done
 
-  
+  # dann werden optionale Links durchsucht
+  for EINZEL in $OPTLINKS; do
+   if [ "`echo $EINZEL | grep $LINKZIEL`" == "" ]
+   then
+    cd ~
+   else
+    LOKAL=`echo $EINZEL | cut -d ":" -f 2`
+    rm -rf $HOMEDIR/$LOKAL
+    ln -s $HOMEDIR/$SERVEREINSTELLUNGEN/$LINKZIEL $HOMEDIR/$LOKAL
+   fi
+  done
+
+
  fi
 
 done
